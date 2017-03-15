@@ -10,16 +10,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fedc/fedc.git"
+    "url": "git+https://github.com/jxchenvip/fedc.git"
   },
   "keywords": [
     "fedc",
   ],
   "author": "jxchen",
+  "email": "928272182@qq.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fedc/fedc/issues"
+    "url": "https://github.com/jxchenvip/fedc/issues"
   },
-  "homepage": "https://github.com/fedc/fedc#readme",
+  "homepage": "https://github.com/jxchenvip/fedc#readme",
   "main": "fedc.js"
 }
