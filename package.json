@@ -1,6 +1,6 @@
 {
   "name": "fedc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "执行本地项目",
   "bin": {
     "fedc": "./bin/fedc.js"
