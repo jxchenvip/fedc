@@ -1,0 +1,25 @@
+{
+  "name": "fedc",
+  "version": "1.0.0",
+  "description": "执行本地项目",
+  "bin": {
+    "fedc": "./bin/fedc.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fedc/fedc.git"
+  },
+  "keywords": [
+    "fedc",
+  ],
+  "author": "jxchen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fedc/fedc/issues"
+  },
+  "homepage": "https://github.com/fedc/fedc#readme",
+  "main": "fedc.js"
+}
