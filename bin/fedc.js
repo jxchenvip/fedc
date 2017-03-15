@@ -125,14 +125,25 @@ function copy(from, to) {
     readerStream.pipe(writerStream);
 }
 
+function isMouduleDir() {
+    var webpack = path.join(process.cwd(), 'webpack.config.js');
+    var modules = path.join(process.cwd(), 'node_modules');
+    var package = path.join(process.cwd(), 'package.json');
+    return fs.existsSync(webpack) && fs.existsSync(webpack) && fs.existsSync(webpack);
+}
+
 /** [removeWebpackConfigJs 删除webpck.config.js文件] */
 function removeWebpackConfigJs() {
-    fs.unlink(path.join(cwd, 'webpack.config.js'));
+    if (!isMouduleDir()) {
+        fs.unlink(path.join(cwd, 'webpack.config.js'));
+    }
 }
 
 /** [addWebpackConfigJs 添加webpck.config.js文件] */
 function addWebpackConfigJs() {
-    copy(path.join(lib, 'webpack.config.js'), path.join(cwd, 'webpack.config.js'));
+    if (!isMouduleDir()) {
+        copy(path.join(lib, 'webpack.config.js'), path.join(cwd, 'webpack.config.js'));
+    }
 }
 
 /** [exeChildProcess 执行子进程] */
@@ -150,7 +161,7 @@ function exeChildProcess() {
     });
 
     ls.on('close', (code) => {
-        console.log(`${code}`);
+        // console.log(`${code}`);
     });
 }
 
@@ -163,9 +174,7 @@ function start() {
         removeWebpackConfigJs();
         process.exit();
     });
-
     addWebpackConfigJs();
     exeChildProcess();
-
 }
 start();
