@@ -10,10 +10,10 @@ const color = require('../lib/utils/color'); // 设置颜色
 const pkg = require('../package.json'); // 读取package.json
 const childProcess = require('child_process');
 const exes = {
-    branches: 'webpack -d -w',
-    trunk: 'webpack -boss -trunk',
-    path: 'webpack -boss -move-path:',
-    mpath: 'webpack -d -w -move-path:' // 
+    branches: 'webpack -d -w --hide-modules',
+    trunk: 'webpack -trunk',
+    path: 'webpack -move-path:',
+    mpath: 'webpack -d -w --hide-modules -move-path:' // 
 };
 
 var dos = exes.branches;
@@ -37,7 +37,7 @@ var argvs = process.argv.reduce((o, key, index, arr) => {
 
 /** 帮助 */
 if (argvs.h) {
-    console.log(`${color.TIP} qyjs`);
+    console.log(`${color.TIP} fedc`);
     console.log(`${color.TIP} -h help`);
     console.log(`${color.TIP} -v version`);
     console.log(`${color.TIP} -branches 压缩到branches分支带map文件`);
