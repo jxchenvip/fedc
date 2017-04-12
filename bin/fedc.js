@@ -6,18 +6,18 @@ const cwd = process.cwd(); // dir 为全局变量初始为执行目录
 const lib = path.join(__dirname, '../lib'); // 保存目录
 const utils = path.join(__dirname, '../lib/utils'); // 保存目录
 const tpl = path.join(__dirname, '../lib/tpl'); // 保存目录
+const tpl2 = path.join(__dirname, '../lib/tpl2'); // 保存目录
 const color = require('../lib/utils/color'); // 设置颜色 
 const pkg = require('../package.json'); // 读取package.json
 const childProcess = require('child_process');
 const exes = {
-    branches: 'webpack -d -w --hide-modules',
-    trunk: 'webpack -trunk',
-    path: 'webpack -move-path:',
-    mpath: 'webpack -d -w --hide-modules -move-path:' // 
+    branches: 'webpack -w',
+    trunk: 'webpack',
+    path: 'webpack ',
+    mpath: 'webpack -w' // 
 };
 
 var dos = exes.branches;
-
 /**
  * 整理入参数
  */
@@ -41,16 +41,16 @@ if (argvs.h) {
     console.log(`${color.TIP} -h help`);
     console.log(`${color.TIP} -v version`);
     console.log(`${color.TIP} -branches 压缩到branches分支带map文件`);
-    console.log(`${color.TIP} 例qyjs branches默认压缩到branches`);
+    console.log(`${color.TIP} fedc branches默认压缩到branches`);
     console.log(`${color.TIP} -trunk 压缩到trunk分支不带map文件`);
-    console.log(`${color.TIP} 例qyjs trunk`);
+    console.log(`${color.TIP} fedc trunk`);
     console.log(`${color.TIP} -$ 压缩到指定路径带map文件`);
-    console.log(`${color.TIP} 例qyjs $c:/a/b`);
+    console.log(`${color.TIP} fedc $c:/a/b`);
     console.log(`${color.TIP} $$ 压缩到指定路径不带map文件`);
-    console.log(`${color.TIP} 例qyjs $$c:/a/b`);
+    console.log(`${color.TIP} fedc $$c:/a/b`);
     console.log(`${color.TIP} [webpack命令]`);
-    console.log(`${color.TIP} 例qyjs [webpack-d-w-trunk]方括号内不能有空格`);
-    console.log(`${color.TIP}  [webpack-d-w-trunk]方括号内不能有空格`);
+    console.log(`${color.TIP} fedc [webpack,-d,-w,--color]方括号内不能有空格`);
+    console.log(`${color.TIP}  [webpack,-d,-w,--color]方括号内不能有空格`);
     // console.log(`${color.TIP} -reset 备份webpack.config.js,package.json`);
     process.exit();
 }
@@ -63,26 +63,52 @@ if (argvs.v) {
 
 /** 备份配置文件 */
 if (argvs.reset) {
-    resetConfigJs();
+    resetConfigJs(tpl);
     return;
 }
 
-if (argvs.branches) dos = exes.branches; // 移动到branches分支，生成map文件
-if (argvs.trunk) dos = exes.trunk; // 移动到trunk分支，没有map文件
-if (argvs.$) dos = exes.path + path.join(argvs.$); // 移动到指定路径
-if (argvs.$$) dos = exes.mpath + path.join(argvs.$$); //移动到指定路径并生成map文件
+/** 备份配置文件 */
+if (argvs.reset2) {
+    resetConfigJs(tpl2);
+    return;
+}
+
+var content = {};
+
+// 移动到branches分支，生成map文件
+if (argvs.branches) {
+    content.name = 'BRANCHES';
+    content.value = argvs.branches;
+    dos = exes.branches;
+}
+// 移动到trunk分支，没有map文件
+if (argvs.trunk) {
+    content.name = 'TRUNK';
+    content.value = argvs.trunk;
+    dos = exes.trunk;
+}
+// 移动到指定路径 
+if (argvs.$) {
+    content.name = '$';
+    content.value = argvs.$;
+    dos = exes.branches;
+}
+//移动到指定路径并生成map文件
+if (argvs.$$) {
+    content.name = '$$';
+    content.value = argvs.$$;
+    dos = exes.trunk;
+}
 if (argvs.define) {
     dos = getWebpackExe(argvs.define);
 }
 
+
+
 /** [getWebpackExe 获取webpack命令] */
 function getWebpackExe(str) {
-    var arr = str.split('-');
-    if (arr[0] != 'webpack') {
-        return '';
-    } else {
-        return arr.join(' -');
-    }
+    if (str.indexOf('webpack') == -1) return '';
+    return str.split(',').join(' ');
 }
 
 /**
@@ -102,7 +128,7 @@ function prompt(prompt, callback) {
 }
 
 /** [resetConfigJs 备份webpack.config.json文件] */
-function resetConfigJs() {
+function resetConfigJs(tpl) {
     var t = Date.now();
 
     if (fs.existsSync(path.join(cwd, 'webpack.config.js'))) {
@@ -129,20 +155,24 @@ function isMouduleDir() {
     var webpack = path.join(process.cwd(), 'webpack.config.js');
     var modules = path.join(process.cwd(), 'node_modules');
     var package = path.join(process.cwd(), 'package.json');
-    return fs.existsSync(webpack) && fs.existsSync(webpack) && fs.existsSync(webpack);
+    return fs.existsSync(webpack) && fs.existsSync(modules) && fs.existsSync(package);
 }
 
 /** [removeWebpackConfigJs 删除webpck.config.js文件] */
 function removeWebpackConfigJs() {
     if (!isMouduleDir()) {
-        fs.unlink(path.join(cwd, 'webpack.config.js'));
+        fs.unlink(path.join(process.cwd(), 'webpack.config.js'));
+        fs.unlink(path.join(process.cwd(), '______message'));
     }
 }
 
 /** [addWebpackConfigJs 添加webpck.config.js文件] */
 function addWebpackConfigJs() {
     if (!isMouduleDir()) {
-        copy(path.join(lib, 'webpack.config.js'), path.join(cwd, 'webpack.config.js'));
+        fs.writeFile('______message', JSON.stringify(content), function(err) {
+            if (err) throw err;
+        });
+        copy(path.join(lib, 'webpack.config.js'), path.join(process.cwd(), 'webpack.config.js'));
     }
 }
 
@@ -150,7 +180,7 @@ function addWebpackConfigJs() {
 function exeChildProcess() {
     if (dos == '') return false;
     const spawn = require('child_process').spawn;
-    const ls = spawn(dos + ' --colors', { shell: true });
+    const ls = spawn(dos + ' --colors --hide-modules', { shell: true });
 
     ls.stdout.on('data', (data) => {
         console.log(`${data}`);
