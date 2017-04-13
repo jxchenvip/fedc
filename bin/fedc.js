@@ -168,11 +168,16 @@ function isMouduleDir() {
     return fs.existsSync(webpack) && fs.existsSync(modules) && fs.existsSync(package);
 }
 
+/** [unlink 安全删除文件] */
+function unlink(filename) {
+    if (fs.existsSync(filename)) fs.unlink(filename);
+}
+
 /** [removeWebpackConfigJs 删除webpck.config.js文件] */
 function removeWebpackConfigJs() {
     if (!isMouduleDir()) {
-        fs.unlink(path.join(process.cwd(), configFileName));
-        fs.unlink(path.join(process.cwd(), writeFileName));
+        unlink(path.join(process.cwd(), configFileName));
+        unlink(path.join(process.cwd(), writeFileName));
     }
 }
 
