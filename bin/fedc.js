@@ -57,6 +57,13 @@ if (argvs.h) {
     process.exit();
 }
 
+
+// 如果是要目录退出
+if(isMouduleDir()) {
+    console.log(`${color.ERROR} 不要在此目录执行此插件`);
+    process.exit();
+}
+
 /** 版本号 */
 if (argvs.v) {
     console.log(pkg.version);
@@ -104,6 +111,7 @@ if (argvs.$$) {
 if (argvs.define) {
     dos = getWebpackExe(argvs.define);
 }
+
 
 
 
