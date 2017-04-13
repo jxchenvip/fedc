@@ -10,6 +10,8 @@ const tpl2 = path.join(__dirname, '../lib/tpl2'); // 保存目录
 const color = require('../lib/utils/color'); // 设置颜色 
 const pkg = require('../package.json'); // 读取package.json
 const childProcess = require('child_process');
+const writeFileName = ',';
+const configFileName = 'webpack.config.js';
 const exes = {
     branches: 'webpack -w',
     trunk: 'webpack',
@@ -131,15 +133,15 @@ function prompt(prompt, callback) {
 function resetConfigJs(tpl) {
     var t = Date.now();
 
-    if (fs.existsSync(path.join(cwd, 'webpack.config.js'))) {
-        fs.rename(path.join(cwd, 'webpack.config.js'), path.join(cwd, t + '_webpack.config.js'));
+    if (fs.existsSync(path.join(cwd, configFileName))) {
+        fs.rename(path.join(cwd, configFileName), path.join(cwd, t + '_' + configFileName));
     }
 
     if (fs.existsSync(path.join(cwd, 'package.json'))) {
         fs.rename(path.join(cwd, 'package.json'), path.join(cwd, t + '_package.json'));
     }
 
-    copy(path.join(tpl, 'webpack.config.js'), path.join(cwd, 'webpack.config.js'));
+    copy(path.join(tpl, configFileName), path.join(cwd, configFileName));
     copy(path.join(tpl, 'package.json'), path.join(cwd, 'package.json'));
     console.log(`${color.SUCCESS} 配置文件已重置！`);
 }
@@ -152,7 +154,7 @@ function copy(from, to) {
 }
 
 function isMouduleDir() {
-    var webpack = path.join(process.cwd(), 'webpack.config.js');
+    var webpack = path.join(process.cwd(), configFileName);
     var modules = path.join(process.cwd(), 'node_modules');
     var package = path.join(process.cwd(), 'package.json');
     return fs.existsSync(webpack) && fs.existsSync(modules) && fs.existsSync(package);
@@ -161,18 +163,18 @@ function isMouduleDir() {
 /** [removeWebpackConfigJs 删除webpck.config.js文件] */
 function removeWebpackConfigJs() {
     if (!isMouduleDir()) {
-        fs.unlink(path.join(process.cwd(), 'webpack.config.js'));
-        fs.unlink(path.join(process.cwd(), '______message'));
+        fs.unlink(path.join(process.cwd(), configFileName));
+        fs.unlink(path.join(process.cwd(), writeFileName));
     }
 }
 
 /** [addWebpackConfigJs 添加webpck.config.js文件] */
 function addWebpackConfigJs() {
     if (!isMouduleDir()) {
-        fs.writeFile('______message', JSON.stringify(content), function(err) {
+        fs.writeFile(writeFileName, JSON.stringify(content), function(err) {
             if (err) throw err;
         });
-        copy(path.join(lib, 'webpack.config.js'), path.join(process.cwd(), 'webpack.config.js'));
+        copy(path.join(lib, configFileName), path.join(process.cwd(), configFileName));
     }
 }
 
